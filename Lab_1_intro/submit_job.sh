@@ -11,6 +11,6 @@
 
 module add libs/tensorflow/1.2
 
-srun python python simple_train_cifar.py &
+srun python simple_train_cifar.py &
  tensorboard --logdir=logs/ --port=17505
 wait
