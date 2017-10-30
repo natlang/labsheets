@@ -72,7 +72,7 @@ def deepnn(x):
 
     # First convolutional layer - maps one image to 32 feature maps.
     with tf.variable_scope('Conv_1'):
-        W_conv1 = weight_variable([2, 2, FLAGS.img_channels, 32])
+        W_conv1 = weight_variable([5, 5, FLAGS.img_channels, 32])
         b_conv1 = bias_variable([32])
         h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
 
@@ -88,14 +88,23 @@ def deepnn(x):
         # Second pooling layer.
         h_pool2 = max_pool_2x2(h_conv2)
 
+    with tf.variable_scope('Conv_3'):
+        # Second convolutional layer -- maps 64 feature maps to 32.
+        W_conv3 = weight_variable([5, 5, 64, 128])
+        b_conv3 = bias_variable([128])
+        h_conv3 = tf.nn.relu(conv2d(h_pool2, W_conv3) + b_conv3)
+
+        # Second pooling layer.
+        h_pool3 = max_pool_2x2(h_conv3)
+
     with tf.variable_scope('FC_1'):
         # Fully connected layer 1 -- after 2 round of downsampling, our 32x32
         # image is down to 8x8x64 feature maps -- maps this to 1024 features.
-        W_fc1 = weight_variable([8 * 8 * 64, 1024])
+        W_fc1 = weight_variable([8 * 8 * 128, 1024])
         b_fc1 = bias_variable([1024])
 
-        h_pool2_flat = tf.reshape(h_pool2, [-1, 8*8*64])
-        h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
+        h_pool3_flat = tf.reshape(h_pool3, [-1, 8*8*128])
+        h_fc1 = tf.nn.relu(tf.matmul(h_pool3_flat, W_fc1) + b_fc1)
 
     with tf.variable_scope('FC_2'):
         # Map the 1024 features to 10 classes
