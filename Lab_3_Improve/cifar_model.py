@@ -113,11 +113,12 @@ def main(_):
         y_ = tf.placeholder(tf.float32, [None, cifar.CLASS_COUNT])
         aug = tf.placeholder(tf.bool)
         
-        #flip_image = tf.cond(aug, lambda: tf.map_fn(tf.image.random_flip_left_right, x_image), lambda: x_image)
-        contrast_image = tf.cond(aug, lambda: tf.map_fn(tf.image.random_contrast, x_image), lambda: x_image)
+        # flip -> aug _image = tf.cond(aug, lambda: tf.map_fn(tf.image.random_flip_left_right, x_image), lambda: x_image)
+        # contrast
+        aug_image = tf.cond(aug, lambda: tf.map_fn(tf.image.random_contrast, x_image, 0.2, 1.8), lambda: x_image)
 
     with tf.name_scope('model'):
-        y_conv = deepnn(flip_image)
+        y_conv = deepnn(aug_image)
 
     cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv))
     correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
