@@ -115,7 +115,7 @@ def main(_):
         
         # flip -> aug _image = tf.cond(aug, lambda: tf.map_fn(tf.image.random_flip_left_right, x_image), lambda: x_image)
         # contrast
-        aug_image = tf.cond(aug, lambda: tf.map_fn(tf.image.random_contrast, x_image, 0.2, 1.8), lambda: x_image)
+        aug_image = tf.cond(aug, lambda: tf.map_fn(tf.image.random_contrast, x_image, dtype=(tf.float32, tf.float32)), lambda: x_image)
 
     with tf.name_scope('model'):
         y_conv = deepnn(aug_image)
