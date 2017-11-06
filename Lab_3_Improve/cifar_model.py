@@ -185,7 +185,7 @@ def main(_):
         while evaluated_images != cifar.nTestSamples:
             # Don't loop back when we reach the end of the test set
             (testImages, testLabels) = cifar.getTestBatch(allowSmallerBatches=True)
-            test_accuracy_temp = sess.run(accuracy, feed_dict={x: testImages, y_: testLabels})
+            test_accuracy_temp = sess.run(accuracy, feed_dict={x: testImages, y_: testLabels, flip: False})
 
             batch_count += 1
             test_accuracy += test_accuracy_temp
