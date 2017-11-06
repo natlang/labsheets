@@ -110,8 +110,8 @@ def main(_):
     # Build the graph for the deep net
     with tf.name_scope('inputs'):
         x = tf.placeholder(tf.float32, [None, cifar.IMG_WIDTH * cifar.IMG_HEIGHT * cifar.IMG_CHANNELS])
-        x_image = tf.reshape(x, [-1, cifar.IMG_WIDTH, cifar.IMG_HEIGHT, cifar.IMG_CHANNELS])
-        x_image_flip = tf.map_fn(tf.image.flip_left_right(x_image))
+        x_flip = tf.map_fn(tf.image.flip_left_right(x))
+        x_image = tf.reshape(x_flip, [-1, cifar.IMG_WIDTH, cifar.IMG_HEIGHT, cifar.IMG_CHANNELS])
         y_ = tf.placeholder(tf.float32, [None, cifar.CLASS_COUNT])
 
     with tf.name_scope('model'):
