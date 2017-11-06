@@ -48,7 +48,7 @@ checkpoint_path = os.path.join(run_log_dir, 'model.ckpt')
 gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.33)
 
 def aug_contrast(image):
-    return tf.image_random_contrast(image, 0.2, 1.8)
+    return tf.image.random_contrast(image, 0.2, 1.8)
 
 def deepnn(x_image, img_shape=(32, 32, 3), class_count=10):
     """deepnn builds the graph for a deep net for classifying CIFAR10 images.
