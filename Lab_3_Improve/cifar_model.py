@@ -48,9 +48,6 @@ checkpoint_path = os.path.join(run_log_dir, 'model.ckpt')
 gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.33)
 
 def deepnn(x_image, img_shape=(32, 32, 3), class_count=10):
-
-    x_flip = tf.map_fn(tf.image.random_flip_left_right, x_image)
-    
     """deepnn builds the graph for a deep net for classifying CIFAR10 images.
 
     Args:
@@ -112,8 +109,10 @@ def main(_):
     # Build the graph for the deep net
     with tf.name_scope('inputs'):
         x = tf.placeholder(tf.float32, [None, cifar.IMG_WIDTH * cifar.IMG_HEIGHT * cifar.IMG_CHANNELS])
-        x_image = tf.reshape(x_flip, [-1, cifar.IMG_WIDTH, cifar.IMG_HEIGHT, cifar.IMG_CHANNELS])
+        x_image = tf.reshape(x, [-1, cifar.IMG_WIDTH, cifar.IMG_HEIGHT, cifar.IMG_CHANNELS])
         y_ = tf.placeholder(tf.float32, [None, cifar.CLASS_COUNT])
+
+        x_flip = tf.map_fn(tf.image.random_flip_left_right, x_image)
 
     with tf.name_scope('model'):
         y_conv = deepnn(x_flip)
