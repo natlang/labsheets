@@ -111,9 +111,10 @@ def main(_):
         x = tf.placeholder(tf.float32, [None, cifar.IMG_WIDTH * cifar.IMG_HEIGHT * cifar.IMG_CHANNELS])
         x_image = tf.reshape(x, [-1, cifar.IMG_WIDTH, cifar.IMG_HEIGHT, cifar.IMG_CHANNELS])
         y_ = tf.placeholder(tf.float32, [None, cifar.CLASS_COUNT])
-        flip = tf.placeholder(tf.bool)
+        aug = tf.placeholder(tf.bool)
         
-        flip_image = tf.cond(flip, lambda: tf.map_fn(tf.image.random_flip_left_right, x_image), lambda: x_image)
+        #flip_image = tf.cond(aug, lambda: tf.map_fn(tf.image.random_flip_left_right, x_image), lambda: x_image)
+        contrast_image = tf.cond(aug, lambda: tf.map_fn(tf.image.random_contrast, x_image), lambda: x_image)
 
     with tf.name_scope('model'):
         y_conv = deepnn(flip_image)
@@ -157,12 +158,12 @@ def main(_):
             (testImages, testLabels) = cifar.getTestBatch()
 
             _, train_summary_str = sess.run([train_step, train_summary],
-                                      feed_dict={x: trainImages, y_: trainLabels, flip: True})
+                                      feed_dict={x: trainImages, y_: trainLabels, aug: True})
 
             # Validation: Monitoring accuracy using validation set
             if (step + 1) % FLAGS.log_frequency == 0:
                 validation_accuracy, validation_summary_str = sess.run([accuracy, validation_summary],
-                                                                       feed_dict={x: testImages, y_: testLabels, flip: False})
+                                                                       feed_dict={x: testImages, y_: testLabels, aug: False})
                 print('step {}, accuracy on validation set : {}'.format(step, validation_accuracy))
                 train_writer.add_summary(train_summary_str, step)
                 validation_writer.add_summary(validation_summary_str, step)
@@ -185,7 +186,7 @@ def main(_):
         while evaluated_images != cifar.nTestSamples:
             # Don't loop back when we reach the end of the test set
             (testImages, testLabels) = cifar.getTestBatch(allowSmallerBatches=True)
-            test_accuracy_temp = sess.run(accuracy, feed_dict={x: testImages, y_: testLabels, flip: False})
+            test_accuracy_temp = sess.run(accuracy, feed_dict={x: testImages, y_: testLabels, aug: False})
 
             batch_count += 1
             test_accuracy += test_accuracy_temp
