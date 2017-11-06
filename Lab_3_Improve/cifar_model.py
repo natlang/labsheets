@@ -47,6 +47,9 @@ checkpoint_path = os.path.join(run_log_dir, 'model.ckpt')
 # limit the process memory to a third of the total gpu memory
 gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.33)
 
+def contrast(image):
+    return tf.image_random_contrast(image, 0.2, 1.8)
+
 def deepnn(x_image, img_shape=(32, 32, 3), class_count=10):
     """deepnn builds the graph for a deep net for classifying CIFAR10 images.
 
@@ -115,7 +118,7 @@ def main(_):
         
         # flip -> aug _image = tf.cond(aug, lambda: tf.map_fn(tf.image.random_flip_left_right, x_image), lambda: x_image)
         # contrast
-        aug_image = tf.cond(aug, lambda: tf.map_fn(tf.image.random_contrast, x_image, dtype=(tf.float32, tf.float32)), lambda: x_image)
+        aug_image = tf.cond(aug, lambda: tf.map_fn(contrast, x_image), lambda: x_image)
 
     with tf.name_scope('model'):
         y_conv = deepnn(aug_image)
