@@ -111,11 +111,12 @@ def main(_):
         x = tf.placeholder(tf.float32, [None, cifar.IMG_WIDTH * cifar.IMG_HEIGHT * cifar.IMG_CHANNELS])
         x_image = tf.reshape(x, [-1, cifar.IMG_WIDTH, cifar.IMG_HEIGHT, cifar.IMG_CHANNELS])
         y_ = tf.placeholder(tf.float32, [None, cifar.CLASS_COUNT])
-
-        x_flip = tf.map_fn(tf.image.random_flip_left_right, x_image)
+        flip = tf.placeholder(tf.bool)
+        
+        flip_image = tf.cond(flip, lambda: tf.map_fn(tf.image.random_flip_left_right, x_image), lambda: x_image)
 
     with tf.name_scope('model'):
-        y_conv = deepnn(x_flip)
+        y_conv = deepnn(flip_image)
 
     cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv))
     correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
@@ -156,12 +157,12 @@ def main(_):
             (testImages, testLabels) = cifar.getTestBatch()
 
             _, train_summary_str = sess.run([train_step, train_summary],
-                                      feed_dict={x: trainImages, y_: trainLabels})
+                                      feed_dict={x: trainImages, y_: trainLabels, flip: True})
 
             # Validation: Monitoring accuracy using validation set
             if (step + 1) % FLAGS.log_frequency == 0:
                 validation_accuracy, validation_summary_str = sess.run([accuracy, validation_summary],
-                                                                       feed_dict={x: testImages, y_: testLabels})
+                                                                       feed_dict={x: testImages, y_: testLabels, flip: False})
                 print('step {}, accuracy on validation set : {}'.format(step, validation_accuracy))
                 train_writer.add_summary(train_summary_str, step)
                 validation_writer.add_summary(validation_summary_str, step)
