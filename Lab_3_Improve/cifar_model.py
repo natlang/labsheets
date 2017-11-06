@@ -47,9 +47,10 @@ checkpoint_path = os.path.join(run_log_dir, 'model.ckpt')
 # limit the process memory to a third of the total gpu memory
 gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.33)
 
-x_flip = tf.map_fn(tf.image.random_flip_left_right, x_image)
-
 def deepnn(x_image, img_shape=(32, 32, 3), class_count=10):
+
+    x_flip = tf.map_fn(tf.image.random_flip_left_right, x_image)
+    
     """deepnn builds the graph for a deep net for classifying CIFAR10 images.
 
     Args:
