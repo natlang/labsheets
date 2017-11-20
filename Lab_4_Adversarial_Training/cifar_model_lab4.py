@@ -141,7 +141,7 @@ def main(_):
     loss_summary = tf.summary.scalar("Loss", cross_entropy)
     accuracy_summary = tf.summary.scalar("Accuracy", accuracy)
     learning_rate_summary = tf.summary.scalar("Learning Rate", decayed_learning_rate)
-    img_summary = tf.summary.image('Input Images', x_image, max_outputs=128)
+    img_summary = tf.summary.image('Input Images', x_image)
     test_img_summary = tf.summary.image('Test Images', x_image)
 
     train_summary = tf.summary.merge([loss_summary, accuracy_summary, learning_rate_summary, img_summary])
@@ -153,9 +153,10 @@ def main(_):
         with tf.variable_scope('model', reuse=True):
             fgsm = FastGradientMethod(model, sess=sess)
             adv_x = fgsm.generate(x_image, eps=fgsm_eps)
-
+        
+        img_summary = tf.summary.image('Original Images', x_image, max_outputs=128)
         adv_img_summary = tf.summary.image('Adv Images', adv_x, max_outputs=128)
-        adversarial_summary = tf.summary.merge([adv_img_summary])
+        adversarial_summary = tf.summary.merge([img_summary, adv_img_summary])
 
         train_writer = tf.summary.FileWriter(run_log_dir + "_train", sess.graph)
         validation_writer = tf.summary.FileWriter(run_log_dir + "_validation", sess.graph)
