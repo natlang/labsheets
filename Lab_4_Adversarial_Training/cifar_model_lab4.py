@@ -119,6 +119,7 @@ def main(_):
     # Build the graph for the deep net
     with tf.name_scope('inputs'):
         x = tf.placeholder(tf.float32, shape=[None, cifar.IMG_WIDTH * cifar.IMG_HEIGHT * cifar.IMG_CHANNELS])
+        adv_x = fgsm.generate(x, fgsm_eps)
         x_image = tf.reshape(x, [-1, cifar.IMG_WIDTH, cifar.IMG_HEIGHT, cifar.IMG_CHANNELS])
         y_ = tf.placeholder(tf.float32, shape=[None, cifar.CLASS_COUNT])
 

@@ -117,7 +117,7 @@ def main(_):
         aug = tf.placeholder(tf.bool)
         
         # flip -> aug _image = tf.cond(aug, lambda: tf.map_fn(tf.image.random_flip_left_right, x_image), lambda: x_image)
-        # contrast
+        # contrast ->
         aug_image = tf.cond(aug, lambda: tf.map_fn(aug_contrast, x_image), lambda: x_image)
 
     with tf.name_scope('model'):
