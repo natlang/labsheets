@@ -141,7 +141,7 @@ def main(_):
     loss_summary = tf.summary.scalar("Loss", cross_entropy)
     accuracy_summary = tf.summary.scalar("Accuracy", accuracy)
     learning_rate_summary = tf.summary.scalar("Learning Rate", decayed_learning_rate)
-    img_summary = tf.summary.image('Input Images', x_image)
+    img_summary = tf.summary.image('Input Images', x_image, max_outputs=128)
     test_img_summary = tf.summary.image('Test Images', x_image)
 
     train_summary = tf.summary.merge([loss_summary, accuracy_summary, learning_rate_summary, img_summary])
