@@ -45,7 +45,7 @@ tf.app.flags.DEFINE_integer('batch-size', 128, 'Number of examples per mini-batc
 tf.app.flags.DEFINE_float('learning-rate', 1e-3, 'Number of examples to run. (default: %(default)d)')
 
 
-fgsm_eps = 0.05
+fgsm_eps = 0.02
 adversarial_training_enabled = False
 run_log_dir = os.path.join(FLAGS.log_dir,
                            ('exp_bs_{bs}_lr_{lr}_' + ('adv_trained' if adversarial_training_enabled else '') + 'eps_{eps}')
