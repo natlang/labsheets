@@ -142,7 +142,7 @@ def main(_):
     accuracy_summary = tf.summary.scalar("Accuracy", accuracy)
     learning_rate_summary = tf.summary.scalar("Learning Rate", decayed_learning_rate)
     img_summary = tf.summary.image('Input Images', x_image)
-    test_img_summary = tf.summary.image('Test Images', adv_x)
+    test_img_summary = tf.summary.image('Test Images', x_image)
 
     train_summary = tf.summary.merge([loss_summary, accuracy_summary, learning_rate_summary, img_summary])
     validation_summary = tf.summary.merge([loss_summary, accuracy_summary])
@@ -196,8 +196,13 @@ def main(_):
         while evaluated_images != cifar.nTestSamples:
             # Don't loop back when we reach the end of the test set
             (test_images, test_labels) = cifar.getTestBatch(allowSmallerBatches=True)
+            test_accuracy_temp = sess.run(accuracy, feed_dict={x: testImages, y_: testLabels})
+            adv_images = sess.run(adv_x, feed_dict={x: testImages})
+            adversarial_accuracy_temp = sess.run(accuracy, feed_dict={x: adv_images, y_: testLabels})
 
             batch_count += 1
+            test_accuracy += test_accuracy_temp
+            adversarial_test_accuracy += adversarial_accuracy_temp
             evaluated_images += test_labels.shape[0]
 
         test_accuracy = test_accuracy / batch_count
