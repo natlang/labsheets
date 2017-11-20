@@ -152,7 +152,7 @@ def main(_):
         sess.run(tf.global_variables_initializer())
         with tf.variable_scope('model', reuse=True):
             fgsm = FastGradientMethod(model, sess=sess)
-            adv_x = fgsm.generate(x, fgsm_eps)
+            adv_x = fgsm.generate(x, 0.05)
 
         adversarial_summary = tf.summary.merge([test_img_summary])
 
