@@ -198,7 +198,8 @@ def main(_):
             (test_images, test_labels) = cifar.getTestBatch(allowSmallerBatches=True)
             test_accuracy_temp = sess.run(accuracy, feed_dict={x: test_images, y_: test_labels})
             adv_images = sess.run(adv_x, feed_dict={x: test_images})
-            adversarial_accuracy_temp = sess.run(accuracy, feed_dict={x: adv_images, y_: test_labels})
+            adv_images1 = tf.reshape(adv_images, [-1, cifar.IMG_WIDTH, cifar.IMG_HEIGHT, cifar.IMG_CHANNELS])
+            adversarial_accuracy_temp = sess.run(accuracy, feed_dict={x: adv_images1, y_: test_labels})
 
             batch_count += 1
             test_accuracy += test_accuracy_temp
