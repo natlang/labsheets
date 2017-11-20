@@ -197,9 +197,9 @@ def main(_):
             # Don't loop back when we reach the end of the test set
             (test_images, test_labels) = cifar.getTestBatch(allowSmallerBatches=True)
             test_accuracy_temp = sess.run(accuracy, feed_dict={x: test_images, y_: test_labels})
-            adv_images = sess.run(adv_x, feed_dict={x: test_images, y_: test_labels})
+            adv_images = sess.run(adv_x, feed_dict={x: test_images})
             #adv_images_reshape = np.array(adv_images).reshape(1, len(adv_images))
-            adversarial_accuracy_temp = sess.run(accuracy, feed_dict={x: adv_images, y_: test_labels})
+            adversarial_accuracy_temp = sess.run(accuracy, feed_dict={x_image: adv_images, y_: test_labels})
 
             batch_count += 1
             test_accuracy += test_accuracy_temp
