@@ -119,7 +119,6 @@ def main(_):
     # Build the graph for the deep net
     with tf.name_scope('inputs'):
         x = tf.placeholder(tf.float32, shape=[None, cifar.IMG_WIDTH * cifar.IMG_HEIGHT * cifar.IMG_CHANNELS])
-        adv_x = fgsm.generate(x, fgsm_eps)
         x_image = tf.reshape(x, [-1, cifar.IMG_WIDTH, cifar.IMG_HEIGHT, cifar.IMG_CHANNELS])
         y_ = tf.placeholder(tf.float32, shape=[None, cifar.CLASS_COUNT])
 
@@ -143,7 +142,7 @@ def main(_):
     accuracy_summary = tf.summary.scalar("Accuracy", accuracy)
     learning_rate_summary = tf.summary.scalar("Learning Rate", decayed_learning_rate)
     img_summary = tf.summary.image('Input Images', x_image)
-    test_img_summary = tf.summary.image('Test Images', x_image)
+    test_img_summary = tf.summary.image('Test Images', adv_x)
 
     train_summary = tf.summary.merge([loss_summary, accuracy_summary, learning_rate_summary, img_summary])
     validation_summary = tf.summary.merge([loss_summary, accuracy_summary])
@@ -153,6 +152,7 @@ def main(_):
         sess.run(tf.global_variables_initializer())
         with tf.variable_scope('model', reuse=True):
             fgsm = FastGradientMethod(model, sess=sess)
+            adv_x = fgsm.generate(x_image, fgsm_eps, clip_min=0.0, clip_max=1.0)
 
         adversarial_summary = tf.summary.merge([test_img_summary])
 
