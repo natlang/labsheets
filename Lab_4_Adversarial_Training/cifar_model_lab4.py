@@ -144,7 +144,7 @@ def main(_):
     img_summary = tf.summary.image('Input Images', x_image)
     test_img_summary = tf.summary.image('Test Images', x_image)
 
-    train_summary = tf.summary.merge([loss_summary, accuracy_summary, learning_rate_summary, img_summary, test_img_summary])
+    train_summary = tf.summary.merge([loss_summary, accuracy_summary, learning_rate_summary, img_summary])
     validation_summary = tf.summary.merge([loss_summary, accuracy_summary])
 
     saver = tf.train.Saver(tf.global_variables(), max_to_keep=1)
@@ -154,7 +154,8 @@ def main(_):
             fgsm = FastGradientMethod(model, sess=sess)
             adv_x = fgsm.generate(x_image, eps=fgsm_eps)
 
-        adversarial_summary = tf.summary.merge([test_img_summary])
+		adv_img_summary = tf.summary.image('Adv Images', adv_x)
+        adversarial_summary = tf.summary.merge([adv_img_summary])
 
         train_writer = tf.summary.FileWriter(run_log_dir + "_train", sess.graph)
         validation_writer = tf.summary.FileWriter(run_log_dir + "_validation", sess.graph)
@@ -199,7 +200,9 @@ def main(_):
             test_accuracy_temp = sess.run(accuracy, feed_dict={x: test_images, y_: test_labels})
             adv_images = sess.run(adv_x, feed_dict={x: test_images})
             #adv_images_reshape = np.array(adv_images).reshape(1, len(adv_images))
-            adversarial_accuracy_temp = sess.run(accuracy, feed_dict={x_image: adv_images, y_: test_labels})
+            adversarial_accuracy_temp, adversarial_summary_str = sess.run([accuracy, adversarial_summary], 
+            													feed_dict={x_image: adv_images, y_: test_labels})
+            adversarial_writer.add_summary(adversarial_summary_str, step)
 
             batch_count += 1
             test_accuracy += test_accuracy_temp
