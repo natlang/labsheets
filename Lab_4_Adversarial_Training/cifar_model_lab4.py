@@ -144,7 +144,7 @@ def main(_):
     img_summary = tf.summary.image('Input Images', x_image)
     test_img_summary = tf.summary.image('Test Images', x_image)
 
-    train_summary = tf.summary.merge([loss_summary, accuracy_summary, learning_rate_summary, img_summary])
+    train_summary = tf.summary.merge([loss_summary, accuracy_summary, learning_rate_summary, img_summary, test_img_summary])
     validation_summary = tf.summary.merge([loss_summary, accuracy_summary])
 
     saver = tf.train.Saver(tf.global_variables(), max_to_keep=1)
