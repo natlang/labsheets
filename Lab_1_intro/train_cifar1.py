@@ -42,7 +42,7 @@ tf.app.flags.DEFINE_integer('img-width', 32, 'Image width (default: %(default)d)
 tf.app.flags.DEFINE_integer('img-height', 32, 'Image height (default: %(default)d)')
 tf.app.flags.DEFINE_integer('img-channels', 3, 'Image channels (default: %(default)d)')
 tf.app.flags.DEFINE_integer('num-classes', 10, 'Number of classes (default: %(default)d)')
-tf.app.flags.DEFINE_string('log-dir', '{cwd}/logs_second/'.format(cwd=os.getcwd()),
+tf.app.flags.DEFINE_string('log-dir', '{cwd}/logs/'.format(cwd=os.getcwd()),
                            'Directory where to write event logs and checkpoint. (default: %(default)s)')
 
 
@@ -88,23 +88,14 @@ def deepnn(x):
         # Second pooling layer.
         h_pool2 = max_pool_2x2(h_conv2)
 
-    with tf.variable_scope('Conv_3'):
-        # Second convolutional layer -- maps 64 feature maps to 32.
-        W_conv3 = weight_variable([5, 5, 64, 128])
-        b_conv3 = bias_variable([128])
-        h_conv3 = tf.nn.relu(conv2d(h_pool2, W_conv3) + b_conv3)
-
-        # Second pooling layer.
-        h_pool3 = max_pool_2x2(h_conv3)
-
     with tf.variable_scope('FC_1'):
         # Fully connected layer 1 -- after 2 round of downsampling, our 32x32
         # image is down to 8x8x64 feature maps -- maps this to 1024 features.
-        W_fc1 = weight_variable([8 * 8 * 128, 1024])
+        W_fc1 = weight_variable([8 * 8 * 64, 1024])
         b_fc1 = bias_variable([1024])
 
-        h_pool3_flat = tf.reshape(h_pool3, [-1, 8*8*128])
-        h_fc1 = tf.nn.relu(tf.matmul(h_pool3_flat, W_fc1) + b_fc1)
+        h_pool2_flat = tf.reshape(h_pool2, [-1, 8*8*64])
+        h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
     with tf.variable_scope('FC_2'):
         # Map the 1024 features to 10 classes
