@@ -47,7 +47,7 @@ tf.app.flags.DEFINE_string('log-dir', '{cwd}/logs_second/'.format(cwd=os.getcwd(
 
 
 run_log_dir = os.path.join(FLAGS.log_dir,
-                           'exp_bs_{bs}_lr_{lr}'.format(bs=FLAGS.batch_size,
+                           'second_exp_bs_{bs}_lr_{lr}'.format(bs=FLAGS.batch_size,
                                                         lr=FLAGS.learning_rate))
 def deepnn(x):
     """deepnn builds the graph for a deep net for classifying CIFAR10 images.
