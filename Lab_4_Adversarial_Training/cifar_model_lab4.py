@@ -154,9 +154,9 @@ def main(_):
             fgsm = FastGradientMethod(model, sess=sess)
             adv_x = fgsm.generate(x_image, eps=fgsm_eps)
         
-        img_summary = tf.summary.image('Original Images', x_image, max_outputs=128)
+        img_summary_2 = tf.summary.image('Original Images', x_image, max_outputs=128)
         adv_img_summary = tf.summary.image('Adv Images', adv_x, max_outputs=128)
-        adversarial_summary = tf.summary.merge([img_summary, adv_img_summary])
+        adversarial_summary = tf.summary.merge([img_summary_2, adv_img_summary])
 
         train_writer = tf.summary.FileWriter(run_log_dir + "_train", sess.graph)
         validation_writer = tf.summary.FileWriter(run_log_dir + "_validation", sess.graph)
