@@ -45,7 +45,7 @@ tf.app.flags.DEFINE_string('log-dir', '{cwd}/logs/'.format(cwd=os.getcwd()),
 
 
 run_log_dir = os.path.join(FLAGS.log_dir,
-                           'exp_bs_{bs}_lr_{lr}'.format(bs=FLAGS.batch_size,
+                           'exp_bs_{bs}_lr_{lr}_rate_decay'.format(bs=FLAGS.batch_size,
                                                         lr=FLAGS.learning_rate))
 # limit the process memory to a third of the total gpu memory
 gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.33)
