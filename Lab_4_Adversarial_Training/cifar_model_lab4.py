@@ -192,6 +192,7 @@ def main(_):
 
             if step % FLAGS.flush_frequency == 0:
                 train_writer.flush()
+                adversarial_writer.flush()
                 validation_writer.flush()
 
         # Resetting the internal batch indexes
