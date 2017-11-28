@@ -169,10 +169,10 @@ def main(_):
             (train_images, train_labels) = cifar.getTrainBatch()
             (test_images, test_labels) = cifar.getTestBatch()
 
-            # adv_train_images = sess.run(adv_x, feed_dict={x: train_images})
-            #
-            # _, adv_train_summary_str = sess.run([train_step, train_summary],
-            #                                 feed_dict={x_image: adv_train_images, y_: train_labels})
+            adv_train_images = sess.run(adv_x, feed_dict={x: train_images})
+
+            _, adv_train_summary_str = sess.run([train_step, train_summary],
+                                            feed_dict={x_image: adv_train_images, y_: train_labels})
 
             _, train_summary_str = sess.run([train_step, train_summary],
                                             feed_dict={x: train_images, y_: train_labels})
@@ -180,7 +180,7 @@ def main(_):
             # Validation: Monitoring accuracy using validation set
             if step % FLAGS.log_frequency == 0:
                 train_writer.add_summary(train_summary_str, step)
-                # adversarial_writer.add_summary(adv_train_summary_str, step)
+                adversarial_writer.add_summary(adv_train_summary_str, step)
                 validation_accuracy, validation_summary_str = sess.run([accuracy, validation_summary],
                                                                        feed_dict={x: test_images, y_: test_labels})
                 print('step {}, accuracy on validation set : {}'.format(step, validation_accuracy))
