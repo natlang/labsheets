@@ -165,7 +165,7 @@ def main(_):
         sess.run(tf.global_variables_initializer())
 
         # Training and validation
-        for step in range(0, FLAGS.max_steps, 1):
+        for step in range(0, FLAGS.max_steps, 2):
             (train_images, train_labels) = cifar.getTrainBatch()
             (test_images, test_labels) = cifar.getTestBatch()
 
