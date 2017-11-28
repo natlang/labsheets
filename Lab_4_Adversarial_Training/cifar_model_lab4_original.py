@@ -46,7 +46,7 @@ tf.app.flags.DEFINE_float('learning-rate', 1e-3, 'Number of examples to run. (de
 
 
 fgsm_eps = 0.05
-adversarial_training_enabled = True
+adversarial_training_enabled = False
 run_log_dir = os.path.join(FLAGS.log_dir,
                            ('exp_bs_{bs}_lr_{lr}_' + ('adv_trained' if adversarial_training_enabled else '') + 'eps_{eps}')
                            .format(bs=FLAGS.batch_size, lr=FLAGS.learning_rate, eps=fgsm_eps))
@@ -152,11 +152,8 @@ def main(_):
         sess.run(tf.global_variables_initializer())
         with tf.variable_scope('model', reuse=True):
             fgsm = FastGradientMethod(model, sess=sess)
-            adv_x = fgsm.generate(x_image, eps=fgsm_eps)
 
-        img_summary_2 = tf.summary.image('Original Images', x_image, max_outputs=128)
-        adv_img_summary = tf.summary.image('Adv Images', adv_x, max_outputs=128)
-        adversarial_summary = tf.summary.merge([img_summary_2, adv_img_summary])
+        adversarial_summary = tf.summary.merge([test_img_summary])
 
         train_writer = tf.summary.FileWriter(run_log_dir + "_train", sess.graph)
         validation_writer = tf.summary.FileWriter(run_log_dir + "_validation", sess.graph)
@@ -169,17 +166,12 @@ def main(_):
             (train_images, train_labels) = cifar.getTrainBatch()
             (test_images, test_labels) = cifar.getTestBatch()
 
-            adv_train_images = sess.run(adv_x, feed_dict={x: train_images})
-
-            _, adv_train_summary_str = sess.run([train_step, train_summary],
-                                            feed_dict={x: adv_train_images, y_: train_labels})
-
             _, train_summary_str = sess.run([train_step, train_summary],
                                             feed_dict={x: train_images, y_: train_labels})
 
             # Validation: Monitoring accuracy using validation set
             if step % FLAGS.log_frequency == 0:
-                train_writer.add_summary(train_summary_str, adversarial_train_summary_str, step)
+                train_writer.add_summary(train_summary_str, step)
                 validation_accuracy, validation_summary_str = sess.run([accuracy, validation_summary],
                                                                        feed_dict={x: test_images, y_: test_labels})
                 print('step {}, accuracy on validation set : {}'.format(step, validation_accuracy))
@@ -203,16 +195,8 @@ def main(_):
         while evaluated_images != cifar.nTestSamples:
             # Don't loop back when we reach the end of the test set
             (test_images, test_labels) = cifar.getTestBatch(allowSmallerBatches=True)
-            test_accuracy_temp = sess.run(accuracy, feed_dict={x: test_images, y_: test_labels})
-
-            adv_test_images = sess.run(adv_x, feed_dict={x: test_images})
-            adversarial_accuracy_temp, adversarial_summary_str = sess.run([accuracy, adversarial_summary],
-            													feed_dict={x_image: adv_test_images, y_: test_labels})
-            adversarial_writer.add_summary(adversarial_summary_str, step)
 
             batch_count += 1
-            test_accuracy += test_accuracy_temp
-            adversarial_test_accuracy += adversarial_accuracy_temp
             evaluated_images += test_labels.shape[0]
 
         test_accuracy = test_accuracy / batch_count
