@@ -202,8 +202,8 @@ def main(_):
         adversarial_test_accuracy = 0
         batch_count = 0
 
-        print str(evaluated_images)
-        print str(cifar.nTestSamples)
+        print('Evaluated images: ' + str(evaluated_images))
+        print('test samples: ' + str(cifar.nTestSamples))
         while evaluated_images != cifar.nTestSamples:
             # Don't loop back when we reach the end of the test set
             (test_images, test_labels) = cifar.getTestBatch(allowSmallerBatches=True)
